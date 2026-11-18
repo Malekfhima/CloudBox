@@ -1,0 +1,6 @@
+{
+  "name": "CloudBox",
+  "description": "CloudBox — Secure cloud storage, file management, and team collaboration SaaS platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
