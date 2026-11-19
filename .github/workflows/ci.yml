@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cloudbox
+          POSTGRES_USER: cloudbox
+          POSTGRES_PASSWORD: cloudbox
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cloudbox -d cloudbox"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://cloudbox:cloudbox@localhost:5432/cloudbox
+      JWT_ACCESS_SECRET: ci-access-secret-with-at-least-32-characters
+      JWT_REFRESH_SECRET: ci-refresh-secret-with-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run db:migrate
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
